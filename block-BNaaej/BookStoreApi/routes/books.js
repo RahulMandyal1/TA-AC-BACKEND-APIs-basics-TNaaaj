@@ -20,6 +20,8 @@ router.post("/", async (req, res) => {
   try {
     let categoryname = req.body.category;
     req.body.category = [];
+    let tagsArr = req.body.tags.split(",");
+    req.body.tags = tagsArr;
     let book = await Book.create(req.body);
     // creates a category  document alng with the book id as well
     let category = await Category.create({
@@ -105,13 +107,38 @@ router.get("/:categoryname/", async (req, res) => {
   }
 });
 
-//list all the books by the author
-router.get("/:author/authorbooks", async (req, res) => {
+// - list all tags
+
+router.get("/alltags", async (req, res) => {
   try {
-    let bookByAuthor = Book.aggregate([
-      { $match: { author: req.params.author } },
-    ]);
-    res.status(202).json(bookByAuthor);
+    let books = await Book.find({}).populate("category");
+    let tagarr = [];
+    let tagsArray = books.forEach((cv) => {
+      cv.tags.forEach((cv) => {
+        tagarr.push(cv);
+      });
+    });
+    let uniqueArr = [...new Set(tagarr)];
+    res.status(200).json(uniqueArr);
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
+
+// get all tags in  the ascending order
+
+router.get("/alltags/ascending", async (req, res) => {
+  try {
+    let books = await Book.find({}).populate("category");
+    let tagarr = [];
+    let tagsArray = books.forEach((cv) => {
+      cv.tags.forEach((cv) => {
+        tagarr.push(cv);
+      });
+    });
+    let uniqueArr = [...new Set(tagarr)];
+    let ascendingorder = tagarr.sort();
+    res.status(200).json(ascendingorder);
   } catch (err) {
     res.status(500).json(err);
   }
