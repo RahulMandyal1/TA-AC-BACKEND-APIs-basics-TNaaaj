@@ -19,6 +19,7 @@ const bookSchema = new mongoose.Schema({
       ref: "Comment",
     },
   ],
+  tags: [{ type: String }],
 });
 const Book = mongoose.model("Book", bookSchema);
 module.exports = Book;
