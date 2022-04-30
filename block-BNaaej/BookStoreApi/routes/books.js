@@ -106,9 +106,11 @@ router.get("/:categoryname/", async (req, res) => {
 });
 
 //list all the books by the author
-router.get("/listbyauthor/", async (req, res) => {
+router.get("/:author/authorbooks", async (req, res) => {
   try {
-    let bookByAuthor = Book.aggregate([{ $group: { _id: "$author" } }]);
+    let bookByAuthor = Book.aggregate([
+      { $match: { author: req.params.author } },
+    ]);
     res.status(202).json(bookByAuthor);
   } catch (err) {
     res.status(500).json(err);
